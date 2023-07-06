@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Center,
-  Container,
   useColorMode,
   Tooltip,
   IconButton,
@@ -11,16 +10,11 @@ import {
   HStack,
   Text,
   Heading,
-  Box,
   Link,
   VStack,
-  Button,
   AspectRatio,
-  Menu,
-  HamburgerIcon,
-  Pressable,
 } from "native-base";
-
+import Header from './_header';
 // Start editing here, save and see your changes.
 export default function App({ products }) {
   return (
@@ -38,14 +32,7 @@ export default function App({ products }) {
               resizeMode="contain"
             />
           </AspectRatio>
-          <Menu trigger={triggerProps => (
-            <Pressable {...triggerProps}>
-                <HamburgerIcon size="lg" />
-              </Pressable>
-            )}>
-            <Menu.Item><Link href="/">Home</Link></Menu.Item>
-            <Menu.Item><Link href="/products">Catalog</Link></Menu.Item>
-          </Menu>
+          <Header />
         </HStack>
         <Heading size="2xl">Welcome to the Jordan Store</Heading>
         <Text>

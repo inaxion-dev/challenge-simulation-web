@@ -10,18 +10,20 @@ import {
   HStack,
   Text,
   Heading,
-  Box,
   Link,
+  Flex,
   VStack,
-  Button,
   AspectRatio,
-  Menu,
-  Pressable,
-  HamburgerIcon,
+  useBreakpointValue
 } from "native-base";
+import Header from '../_header';
 
 // Start editing here, save and see your changes.
 export default function ProductCatalog({ products }) {
+  const flexDir = useBreakpointValue({
+    base: "column",
+    md: "row"
+  });
   return (
     <Center
       flex={1}
@@ -39,29 +41,24 @@ export default function ProductCatalog({ products }) {
               />
             </AspectRatio>
           </Link>
-          <Menu trigger={triggerProps => (
-            <Pressable {...triggerProps}>
-                <HamburgerIcon size="lg" />
-              </Pressable>
-            )}>
-            <Menu.Item><Link href="/">Home</Link></Menu.Item>
-            <Menu.Item><Link href="/products">Catalog</Link></Menu.Item>
-          </Menu>
+          <Header />
         </HStack>
         <Heading size="2xl">Product Catalog</Heading>
-        {products.map(({ id, name, year, heroImage }) => (
-          <Link key={id} href={`/products/${id}`}>
-            <VStack alignContent="center" space={8}>
-              <Center padding="sm" _dark={{ bg: 'gray.600' }} _light={{ bg: 'gray.100' }}>
-                <Text fontSize="xl">{name} ({year})</Text>
-                <AspectRatio w={48} ratio={16 / 9}>
-                  <Image source={{ uri: heroImage }} alt={name} />
-                </AspectRatio>
-                {/* <Image source={{ uri: heroImage }} size={48} alt={name} /> */}
-              </Center>
-            </VStack>
-          </Link>
-        ))}
+        <Flex flexDirection={flexDir} gap={3} flexWrap="wrap" justifyContent="center">
+          {products.map(({ id, name, year, heroImage, description }) => (
+            <Link key={id} href={`/products/${id}`}>
+              <VStack alignContent="center" space={8}>
+                <Center padding="sm" _dark={{ bg: 'gray.600' }} _light={{ bg: 'gray.100' }}>
+                  <Text fontSize="xl">{name} ({year})</Text>
+                  <AspectRatio w={48} ratio={16 / 9}>
+                    <Image source={{ uri: heroImage }} alt={name} />
+                  </AspectRatio>
+                  {flexDir === "row" && <Text fontSize="xs">{`${description.substring(0, 30)} ... `}</Text>}
+                </Center>
+              </VStack>
+            </Link>
+          ))}
+        </Flex>
       </VStack>
       <ColorModeSwitch />
     </Center>

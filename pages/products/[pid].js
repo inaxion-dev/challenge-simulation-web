@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import {
   Center,
@@ -11,20 +11,38 @@ import {
   HStack,
   Text,
   Heading,
-  Box,
   Link,
   VStack,
-  Button,
+  Flex,
   AspectRatio,
-  Menu,
-  Pressable,
-  HamburgerIcon,
+  useBreakpointValue
 } from "native-base";
-
+import Header from '../_header';
 // Start editing here, save and see your changes.
 export default function ProductDetails(props) {
+  const flexDir = useBreakpointValue({
+    base: "column",
+    md: "row"
+  });
   const router = useRouter();
   const { pid } = router.query;
+  const [product, setProduct] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    const callAPI = async () => {
+      setIsLoading(true)
+      try {
+        const res = await fetch(`http://localhost:3000/api/products/${pid}`)
+        const data = await res.json()
+        setProduct(data)
+      } catch (error) {
+        console.log(error)
+      }
+      setIsLoading(false)
+    }
+    callAPI();
+  }, [pid])
+  if (!isLoading && !product.id) return <Text>Product not found</Text>
   return (
     <Center
       flex={1}
@@ -42,17 +60,26 @@ export default function ProductDetails(props) {
               />
             </AspectRatio>
           </Link>
-          <Menu trigger={triggerProps => (
-            <Pressable {...triggerProps}>
-                <HamburgerIcon size="lg" />
-              </Pressable>
-            )}>
-            <Menu.Item><Link href="/">Home</Link></Menu.Item>
-            <Menu.Item><Link href="/products">Catalog</Link></Menu.Item>
-          </Menu>
+          <Header />
         </HStack>
-        <Heading size="2xl">Product Detail for ...</Heading>
-        <Text>Need to fetch details for Product ID: {pid}</Text>
+        {isLoading ? <Heading>Loading...</Heading> :
+          <Flex>
+            <Heading size="2xl">{product.name} ({product.year})</Heading>
+            <Flex maxW={600} gap={1}>
+              <Heading>Description</Heading>
+              <Text>{product.description}</Text>
+            </Flex>
+            <Flex maxW={600} flexDirection={flexDir} gap={3} flexWrap="wrap" justifyContent="space-between">
+              {product.images.map((image, key) => (
+                <AspectRatio key={key} w={64} ratio={5 / 3}>
+                  <Image
+                    source={{ uri: `/${image}` }} alt={product.name}
+                  />
+                </AspectRatio>
+              ))}
+            </Flex>
+          </Flex>
+        }
       </VStack>
       <ColorModeSwitch />
     </Center>
